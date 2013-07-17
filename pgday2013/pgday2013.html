@@ -1,0 +1,1438 @@
+<!--
+Google IO 2012/2013 HTML5 Slide Template
+
+Authors: Eric Bidelman <ebidel@gmail.com>
+         Luke Mahé <lukem@google.com>
+
+URL: https://code.google.com/p/io-2012-slides
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+  <slides class="layout-widescreen">
+
+  <slide>
+    <hgroup>
+      <h2>Keyboard shortcuts</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Pressing 'f' toggles fullscreen viewing</li>
+        <li>Pressing 'w' toggles widescreen</li>
+        <li>Pressing 'o' toggles overview mode</li>
+        <li>Pressing 'ESC' toggles off these goodies</li>
+      </ul>
+      <p>Slides produced using code from <a href="https://code.google.com/p/io-2012-slides/">Google io-2012</a>.</p>
+    </article>
+  </slide>
+
+<slide class="title-slide segue nobackground" data-num="1">
+    <aside class="gdbar"><img src="images/archonet_name.png"></aside>
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+<slide data-num="2">
+    <hgroup>
+      <h2>Richard Huxton is...</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Long-time community member</li>
+        <li>PostgreSQL user since v6.5</li>
+        <li>That's since the last century!</li>
+        <li>Independent consultant based in London</li>
+        <li>Big jobs for small clients</li>
+        <li>Small jobs for big clients</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="3">
+    <hgroup>
+      <h2>What's this all about?</h2>
+    </hgroup>
+    <article>
+	  <p>Full project (small-ish)</p>
+      <ul>
+			<li>Design</li>
+			<li>Development</li>
+			<li>Testing</li>
+			<li>Deployment</li>
+			<li>Monitoring</li>
+            <li>Tools and practices</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="4">
+    <hgroup>
+      <h2>What's this all about?</h2>
+    </hgroup>
+    <article>
+      <ul>
+	  	<li>Not claiming it's all "best practice"</li>
+	  	<li>Guaranteed better than "worst practice"</li>
+        <li>No "experimental" extensions/tools</li>
+	  	<li>All suitable for smaller teams/projects</li>
+        <li>Works for me</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide class="segue" data-num="5"><!-- 2 mins -->
+    <hgroup class="auto-fadein">
+      <h2>The Project</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="6">
+    <hgroup>
+      <h2>UK Supply Teachers</h2>
+    </hgroup>
+    <article>
+      <ul>
+		<li>Cover for sickness, maternity, unfilled vacancy, "trial"</li>
+		<li>We're focusing on day-to-day - response is time-critical</li>
+        <li>~25,000 schools in England</li>
+        <li>~45,000 supply teachers</li>
+        <li>Allow more for nursery-nurses, support staff etc </li>
+		<li>Total spending of £850 million/year</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="8">
+    <hgroup>
+      <h2>Bookings</h2>
+    </hgroup>
+    <article>
+      <p>Match on:</p>
+      <ul>
+        <li>age, subject</li>
+        <li>location</li>
+        <li>availability</li>
+      </ul>
+      <p>Order by:</p>
+      <ul>
+        <li>travel time</li>
+      </ul>
+      <p>Then:</p>
+      <ul>
+        <li>Check id preferred/excluded</li>
+        <li>Contact teacher!</li>
+      </ul>
+    </article>
+  </slide>
+  
+<slide data-num="7">
+    <hgroup>
+      <h2>Target capacity</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Assume 10% of schools book each morning/evening</li>
+        <li>2,500 requests over about 10 minutes</li>
+        <li>Max 5 sec delay for booking response</li>
+        <li>Need ~ 10 req/second</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="10">
+    <hgroup>
+      <h2>Overview - Technology</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>OS: Standard VMs (Debian)</li>
+        <li>DB: PostgreSQL (9.2)</li>
+        <li>Backend: Perl (modern)</li>
+        <li>Frontend: Javascript (:-()</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="12">
+    <hgroup>
+      <h2>PostgreSQL - Detail</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>PostgreSQL 9.2</li>
+        <li>apt.postgresql.org</li>
+        <li>Extensions:
+            <ul>
+                <li>pg_stat_statements</li>
+                <li>crypto</li>
+                <li>intarray</li>
+                <li>pgTAP</li>
+            </ul>
+        </li>
+        <li>Features:
+            <ul>
+                <li>Functional indexes</li>
+                <li>Partial indexes</li>
+                <li>GiST/GIN indexes</li>
+                <li>Custom functions (plpgsql)</li>
+            </ul>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="13">
+    <hgroup>
+      <h2>Backend - Perl</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>perlbrew</li>
+        <li>local::lib</li>
+        <li>Dancer</li>
+        <li>DBI / DBIx::Class</li>
+        <li>Test::More (+ more)</li>
+        <li>PgBouncer</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="15">
+    <hgroup>
+      <h2>Testing</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Browser: selenium, phantomjs</li>
+        <li>Frontend: qUnit, jasmine etc</li>
+        <li>Backend: TAP, Test::More</li>
+        <li>DB: pgTAP</li>
+        <li>OS: Puppet/Chef/CfEngine/Ansible</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide class="segue nobackground" data-num="16"><!-- 8 mins -->
+    <hgroup class="auto-fadein">
+        <h2>Design</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="17">
+    <hgroup>
+      <h2>Database Design</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>schemas by meaning
+            <ul>
+                <li>teacher.teachers, teacher.skills</li>
+                <li>lookup.subjects, util.wkend()</li>
+            </ul>
+        </li>
+        <li>multiple users
+            <ul>
+                <li>db-user: owns database</li>
+                <li>app-user: restricted</li>
+            </ul>
+        </li>
+        <li>core functionality in DB
+            <ul>
+				<li>Core business-rules</li>
+                <li>Auth, search functions</li>
+                <li>Requires a decent ORM/raw SQL</li>
+            </ul>
+        </li>
+        <li>thin backend wrapper
+            <ul>
+                <li>parsing, translation</li>
+                <li>caching</li>
+            </ul>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="18">
+    <hgroup>
+      <h2>Design - Elements</h2>
+    </hgroup>
+    <article class="">
+      <ul class="">
+        <li>Schools
+        </li>
+        <li>Teachers
+        </li>
+        <li>Map
+        </li>
+        <li>Bookings
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="19">
+    <hgroup>
+      <h2>Design - Elements</h2>
+    </hgroup>
+    <article class="">
+      <ul class="">
+        <li>Schools
+            <ul class="">
+                <li>Name, address</li>
+				<li>Ages, specialisms</li>
+				<li>All courtesy HMG</li>
+            </ul>
+        </li>
+        <li>Teachers
+        </li>
+        <li>Map
+        </li>
+        <li>Bookings
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="20">
+    <hgroup>
+      <h2>Design - Elements</h2>
+    </hgroup>
+    <article class="">
+      <ul class="">
+        <li>Schools
+        </li>
+        <li>Teachers
+            <ul class="">
+                <li>Name, contact details</li>
+                <li>Skills: ages, subjects</li>
+                <li>Availability</li>
+            </ul>
+        </li>
+        <li>Map
+        </li>
+        <li>Bookings
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="21">
+    <hgroup>
+      <h2>Design - Elements</h2>
+    </hgroup>
+    <article class="">
+      <ul class="">
+        <li>Schools
+        </li>
+        <li>Teachers
+        </li>
+        <li>Map
+            <ul class="">
+                <li>Postcodes (courtesy HMG)</li>
+                <li>Lat/lon, easting/northing</li>
+            </ul>
+        </li>
+        <li>Bookings
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="22">
+    <hgroup>
+      <h2>Design - Elements</h2>
+    </hgroup>
+    <article class="">
+      <ul class="">
+        <li>Schools
+        </li>
+        <li>Teachers
+        </li>
+        <li>Map
+        </li>
+        <li>Bookings
+            <ul class="">
+                <li>School</li>
+                <li>Ages, subjects</li>
+                <li>Dates</li>
+            </ul>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="23">
+    <hgroup>
+      <h2>Design - Teacher Skills</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="SQL">-- Table: teacher.skills
+  id       longcode  NOT NULL
+  tid      int       NOT NULL REFERENCES teachers ON DELETE CASCADE
+  ages     int4range NOT NULL REFERENCES lookup.age_ranges (ages)
+  subject  longcode  NOT NULL REFERENCES lookup.subjects (code)
+
+-- Sample data
+1  101  [5,11)   QTS
+2  102  [11,16)  MATHS
+3  102  [16,18)  CHEM
+</pre>
+      <ul>
+        <li>Primary: no subjects</li>
+        <li>Secondary: subjects</li>
+        <li>Age-range is per subject</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="24">
+    <hgroup>
+      <h2>Design - Teacher Availability</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="SQL">-- Table: teacher.availability
+  wkend  date    NOT NULL
+  tid    int     NOT NULL REFERENCES teachers ON DELETE CASCADE
+  avail  char(7) NOT NULL
+
+-- Sample data
+2013-07-07  101 aaaaaaa
+2013-07-14  101 HHHHHHH
+</pre>
+      <ul>
+		<li>a = available, S=sick, W=working etc</li>
+		<li>Can build any length of availability through string_agg()</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="25">
+    <hgroup>
+      <h2>Design - Maps</h2>
+    </hgroup>
+    <article>
+	  <p>UK Postcodes</p>
+      <ul>
+		<li>Fine-grained (but variably-sized)</li>
+		<li>Don't line up with any organisational/political boundaries</li>
+		<li>Are regularly added to</li>
+		<li>Are occasionally changed/deleted</li>
+		<li>Can map to the same lat/lon</li>
+		<li>Or none at all</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide class="segue" data-num="26">
+    <hgroup class="auto-fadein">
+      <h2>Development Setup</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="27">
+    <hgroup>
+      <h2>Development Approach</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Script db schema in sections
+            <ul>
+                <li>Complete rebuild script</li>
+            </ul>
+        </li>
+        <li>Script-generated test data</li>
+        <li>Scripted structural tests</li>
+		<li>Scripted functional tests</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="28">
+    <hgroup>
+      <h2>The scripts directory</h2>
+    </hgroup>
+    <article>
+<pre>
+data_20_map.sql
+data_21_map_traveltimes.sql
+...
+rebuild_db.sh
+run_tests.sh
+...
+schema_00_users.sql
+schema_01_database.sql
+schema_03_types.sql
+...
+t/
+testdata/
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="29">
+    <hgroup>
+      <h2>Schema scripts</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">
+-- schema_40_teacher.sql
+BEGIN;
+
+SET search_path=teacher;
+
+-- ...
+
+CREATE TABLE lookup.age_ranges (
+    ages        int4range NOT NULL,
+    description text NOT NULL,
+    PRIMARY KEY (ages)
+);
+-- ...
+
+-- ROLLBACK;
+COMMIT;
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="30">
+    <hgroup>
+      <h2>Data scripts</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">
+BEGIN;
+
+COPY lookup.age_ranges (ages,description) FROM stdin;
+[1,5)	Nursery
+[5,11)	Primary
+[11,16)	Secondary
+[16,18)	F.E.
+\.
+
+// etc
+
+-- ROLLBACK;
+COMMIT;
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="31">
+    <hgroup>
+      <h2>Rollback</h2>
+    </hgroup>
+    <article>
+    <p style="padding-top: 100px; text-align: center; font-size: 90px; color: red">Richard &#x2764; Rollback</p>
+    </article>
+  </slide>
+
+<slide data-num="32">
+    <hgroup>
+      <h2>Rebuild script</h2>
+    </hgroup>
+    <article>
+      <p>Objectives:</p>
+      <ul>
+        <li>Recreate whole DB from scratch</li>
+        <li>Populate with test-data</li>
+        <li>Keep run-time short</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="33">
+    <hgroup>
+      <h2>Rebuild script</h2>
+    </hgroup>
+    <article>
+      <p>Options:</p>
+      <ul>
+        <li>RECREATE_USER=y|N</li>
+        <li>REBUILD=Y|n</li>
+        <li>POPULATE=Y|n</li>
+        <li>RUN_TESTS=Y|n</li>
+        <li>DBUSER, APPUSER, SUPERUSER, DBNAME, PGPORT...</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="34">
+    <hgroup>
+      <h2>Rebuild script</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="bash">PSQLCMD=${PSQLCMD:-/usr/lib/postgresql/9.2/bin/psql}
+PSQL="$PSQLCMD -X -h $PGHOST -p $PGPORT -U $DBUSER -d $DBNAME 
+    -v dbname=$DBNAME -v username=$DBUSER -v appuser=$APPUSER -v superuser=$SUPERUSER 
+    -v home=$APPDIR/ -v ON_ERROR_STOP=1 
+    -q --pset pager=off"
+
+SU_PSQL=...as above but for superuser
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="35">
+    <hgroup>
+      <h2>Rebuild script</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql"># Halt on any error
+set -e
+if [ $REBUILD = "Y" ]; then
+    echo "Creating db..."
+    $SU_PSQL -f schema_01_database.sql
+    #
+    $PSQL -f schema_03_types.sql
+    $PSQL -f schema_20_map_postcodes.sql
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="36">
+	<hgroup>
+		<h2>Test script</h2>
+	</hgroup>
+    <article>
+		<p>Simple wrapper around pg_prove:</p>
+        <ul>
+            <li>Runs SQL and outputs TAP-compatible test results.</li>
+            <li>Can test user capabilities, schema features, queries, exceptions.</li>
+            <li>Two parts: PG's pgTap extension + Perl-based pg_prove.</li>
+            <li>Very useful indeed (thanks Dave Wheeler)</li>
+        </ul>
+	</article>
+</slide>
+
+<slide data-num="36">
+	<hgroup>
+		<h2>pg_prove script</h2>
+	</hgroup>
+	<article>
+        <pre class="prettyprint" data-lang="SQL">BEGIN;
+
+SET search_path = pgtap, whatever;
+
+SELECT plan(3);
+
+SELECT ok(1 < 2, 'One less than two - phew!');
+SELECT is(2, 1+1, 'Addition also ok');
+SELECT throws_like('SELECT 1/0', 
+    '%division%', 
+    'Dividing by zero still bad');
+ROLLBACK;
+        </pre<>
+	</article>
+</slide>
+
+<slide data-num="37">
+    <hgroup>
+      <h2>Test data</h2>
+    </hgroup>
+    <article>
+      <p>Perl script to generate suitable amounts of test data</p>
+      <ul>
+        <li>DBI to read lookup values</li>
+		<li>Output as COPY<ul>
+			<li>easier to debug</li>
+			<li>save to file or pipe to psql</li>
+		</ul></li>
+        <li>Stateless: mk_tchr(i) = f(i)</li>
+        <li>Pre: work_mem, maintenance_work_mem, drop indexes, disable triggers</li>
+        <li>Post: restore indexes, enable triggers</li>
+		<li>Tunable: small+fast | large+slow</li>
+		<li>Start simple and get more realistic as required</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide class="segue" data-num="26">
+    <hgroup class="auto-fadein">
+      <h2>Development - I</h2>
+    </hgroup>
+  </slide>
+
+
+<slide data-num="38">
+    <hgroup>
+      <h2>Bookings Search</h2>
+    </hgroup>
+    <article>
+	  <p>Reminder:</p>
+      <ul>
+        <li>age, subject</li>
+        <li>location</li>
+        <li>availability</li>
+      </ul>
+	  <p>How to index?</p>
+    </article>
+  </slide>
+
+<slide class="segue dark nobackground" data-num="39">
+    <hgroup class="auto-fadein">
+      <h2>You didn't see me do this...</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="40">
+    <hgroup>
+      <h2>Denormalise</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Build an intarray:
+            <ul>
+                <li>Availability: 0-27 (4 weeks)</li>
+                <li>Skills: 1000+ for ages, 2000+ for subjects</li>
+                <li>Map: 10000+ east/northing grid (9 ints)</li>
+            </ul>
+        </li>
+        <li>contains "@&gt;"</li>
+        <li>GiST/GIN index</li>
+      </ul>
+    <br />
+      <ul>
+        <li>Not too big a relational crime.</li>
+        <li>Read-only - basically a materialized view.</li>
+        <li>Will need some triggers to keep it in sync though.</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="41">
+    <hgroup>
+      <h2>Teacher Search-flags</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">CREATE TABLE search_flags (
+    tid       int     NOT NULL REFERENCES teachers ON DELETE CASCADE,
+    is_active boolean NOT NULL,
+    flags     int[]   NOT NULL, 
+    PRIMARY KEY (tid)
+);
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="42">
+    <hgroup>
+      <h2>Teacher Search-flags</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">-- gist|gin__int_ops is from the intarray extension
+
+CREATE INDEX  tch_search_flags_idx 
+ON     teacher.search_flags 
+USING  gist (flags gist__int_ops) 
+WHERE  is_active;
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="43">
+    <hgroup>
+      <h2>Teacher Search-flags</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">SELECT tid FROM teacher.search_flags 
+WHERE is_active AND flags @&gt; ARRAY[1,2,3,1011,2035,10739];
+
+                                       QUERY PLAN                                       
+----------------------------------------------------------------------------------------
+ Bitmap Heap Scan on search_flags  (cost=641.79..9653.96 rows=2502 width=4)
+   Recheck Cond: ((flags @&gt; '{1,2,3,1011,2035,10739}'::integer[]) AND is_active)
+   -&gt;  Bitmap Index Scan on tch_search_flags_idx  (cost=0.00..641.16 rows=2502 width=0)
+         Index Cond: (flags @&gt; '{1,2,3,1011,2035,10739}'::integer[])
+</pre>
+    </article>
+  </slide>
+
+<slide class="segue" data-num="26">
+    <hgroup class="auto-fadein">
+      <h2>Development - II</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="44">
+    <hgroup>
+      <h2>Travel Time</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Use distance as a proxy</li>
+        <li>Mostly works fine</li>
+        <li>Do a final check vs online service</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="45">
+    <hgroup>
+      <h2>Travel Time</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Table map.postcodes - easting/northing</li>
+        <li>Distance sort "&lt;-&gt;"</li>
+        <li>GiST index</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide class="segue dark nobackground" data-num="46">
+    <hgroup class="auto-fadein">
+      <h2>You didn't see me do this either...</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="47">
+    <hgroup>
+      <h2>To Immutability... and Beyond!</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>IMMUTABLE function index</li>
+        <li>Maps postcode &rArr; point</li>
+        <li>But postcodes change...</li>
+        <li>...reindex when postcode table updated</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="48">
+    <hgroup>
+      <h2>Travel Time</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">CREATE FUNCTION map.pc_to_pt(tgt_pcode varchar(10)) RETURNS point
+LANGUAGE plpgsql AS $$
+  DECLARE
+    e int;
+    n int;
+  BEGIN
+    SELECT easting,northing INTO e,n FROM map.postcodes WHERE pcode = tgt_pcode;
+    IF NOT FOUND THEN
+      e := 0;
+      n := 0;
+    END IF;
+    RETURN point(e,n);
+  END;
+$$ IMMUTABLE;
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="49">
+    <hgroup>
+      <h2>Travel Time - Usage</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">WITH pcs AS (VALUES ('SE13 6RY'), ('SE9 3JN'), ('W12 9PT'))
+SELECT p0.column1 AS from_pc, p1.column1 AS to_pc, 
+(map.pc_to_pt(p0.column1) &lt;-&gt; map.pc_to_pt(p1.column1)):
+
+ from_pc  |  to_pc   | dist  
+----------+----------+-------
+ SE13 6RY | SE13 6RY |     0
+ SE13 6RY | SE9 3JN  |  4877
+ SE13 6RY | W12 9PT  | 17020
+ SE9 3JN  | SE13 6RY |  4877
+ SE9 3JN  | SE9 3JN  |     0
+ SE9 3JN  | W12 9PT  | 21895
+ W12 9PT  | SE13 6RY | 17020
+ W12 9PT  | SE9 3JN  | 21895
+ W12 9PT  | W12 9PT  |     0
+(9 rows)
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="50">
+    <hgroup>
+      <h2>Travel Time - Testing</h2>
+    </hgroup>
+    <article class="smaller">
+<pre class="prettyprint" data-lang="sql">BEGIN;
+
+SET search_path = pgtap, teacher;
+
+SELECT plan(3);
+
+-- Bad postcode should give (0,0)
+SELECT ok(
+	map.pc_to_pt('ZZ1 1ZZ') ~= point(0,0),
+	'Bad postcode is 0,0'
+);
+
+-- NW postcode should be west of SE postcode
+SELECT ok(
+	(map.pc_to_pt('NW1 8NH'))[0] &lt; (map.pc_to_pt('SE13 7RY'))[0],
+	'NW is west of SE'
+);
+
+-- NW postcode should be north of SE postcode
+SELECT ok(
+	(map.pc_to_pt('NW1 8NH'))[1] &gt; (map.pc_to_pt('SE13 7RY'))[1],
+	'NW is north of SE'
+);
+
+ROLLBACK;
+</pre>
+    </article>
+  </slide>
+
+<slide class="segue" data-num="26">
+    <hgroup class="auto-fadein">
+      <h2>Development - III</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="51">
+    <hgroup>
+      <h2>All Together</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">CREATE FUNCTION teacher.booking_candidates(
+    tgt_pcode   varchar, 
+    tgt_age     int,
+    tgt_subj    varchar,
+    tgt_days    date[],
+    max_results int = 10)
+RETURNS SETOF teacher.teachers
+...
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="52">
+    <hgroup>
+      <h2>All Together</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">
+...
+BEGIN
+    tgt_flags := [combine args into flags]
+
+    RETURN QUERY SELECT t.*
+    FROM  teacher.teachers     t
+    JOIN  teacher.search_flags sf USING (tid)
+    WHERE is_active AND sf.flags @&gt; tgt_flags
+    ORDER BY map.pc_to_pt(postcode) <-> map.pc_to_pt(tgt_pcode)
+    LIMIT max_results;
+END;
+$$;
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="53">
+    <hgroup>
+      <h2>All Together</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="sql">SELECT * FROM booking_candidates('SE1 8SW', 9, 'QTS', '{2013-07-08,2013-07-09}');
+
+  tid  | first_name | last_name |    telnum     |           email           | postcode |
+-------+------------+-----------+---------------+---------------------------+----------+
+ 31691 | Ray        | Leopard   | 071 0161 0691 | ray.leopard@google.com    | SE17 3DT |
+ 31771 | William    | Bee       | 071 0841 0771 | william.bee@google.com    | SW1V 3EU |
+ 35511 | May        | Viper     | 071 0381 0511 | may.viper@yahoo.com       | SE5 0TS  |
+ 46431 | Gil        | Viper     | 071 0701 0431 | gil.viper@yahoo.com       | EC1V 3SJ |
+ 22473 | Yolanda    | Dog       | 071 0883 0473 | yolanda.dog@bt.com        | SE5 0JD  |
+ 31191 | Ray        | Viper     | 071 0661 0191 | ray.viper@yahoo.com       | N1 9QG   |
+ 44699 | Zack       | Denmark   | 071 0529 0699 | zack.denmark@google.com   | E1 8HY   |
+  2819 | Ulrica     | Denmark   | 071 0049 0819 | ulrica.denmark@google.com | SW8 4JS  |
+ 20411 | May        | Leopard   | 071 0281 0411 | may.leopard@google.com    | SW3 2QS  |
+ 48329 | Elena      | Denmark   | 071 0259 0329 | elena.denmark@bt.com      | N1 0WF   |
+(10 rows)
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="54">
+    <hgroup>
+      <h2>All Together</h2>
+    </hgroup>
+    <article class="flexbox vcenter"><img src="images/teacher_map.png">
+    </article>
+  </slide>
+
+<slide data-num="55">
+    <hgroup>
+      <h2>All Together - Test</h2>
+    </hgroup>
+    <article>
+    <p>Setup...</p>
+<pre class="prettyprint" data-lang="SQL">BEGIN;
+
+SET search_path=pgtap,teacher,public;
+
+SELECT plan(1);
+
+CREATE TEMP TABLE expected_vals (i int, tid int, pc varchar, wkend date);
+
+CREATE TEMP TABLE actual_vals (i int, tid int, pc varchar, wkend date);
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="56">
+    <hgroup>
+      <h2>All Together - Test</h2>
+    </hgroup>
+    <article>
+    <p>Build our expected results...</p>
+<pre class="prettyprint" data-lang="SQL">
+WITH tgt_teachers AS (
+    SELECT * FROM teachers WHERE is_active AND tid &lt; 1000 AND postcode &lt;&gt; 'SE10 8WT'
+) ,tgt_wk AS (
+    SELECT min(wkend) AS wkend FROM availability
+) ,selected_teachers AS (
+    SELECT DISTINCT t.tid, t.postcode, tw.wkend
+    FROM tgt_teachers t
+    JOIN skills       ts USING (tid)
+    JOIN availability ta USING (tid)
+    JOIN tgt_wk       tw USING (wkend)
+    WHERE ts.ages = '[5,11)' AND ts.subject = 'QTS'
+          AND ta.avail LIKE 'a%'
+    ORDER BY tid LIMIT 5
+)
+INSERT INTO expected_vals
+SELECT row_number() OVER (), tid, postcode, wkend
+FROM selected_teachers;
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="57">
+    <hgroup>
+      <h2>All Together - Test</h2>
+    </hgroup>
+    <article>
+    <p>Giving us this.</p>
+<pre class="prettyprint" data-lang="SQL"> i | tid |    pc    |   wkend    
+---+-----+----------+------------
+ 1 | 429 | E1 2JU   | 2013-07-07
+ 2 | 385 | E1W 3DB  | 2013-07-07
+ 3 | 289 | BR1 4LL  | 2013-07-07
+ 4 | 149 | SE10 0PU | 2013-07-07
+ 5 | 105 | SE10 0DG | 2013-07-07
+(5 rows)
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="58">
+    <hgroup>
+      <h2>All Together - Test</h2>
+    </hgroup>
+    <article>
+    <p>Which we test like this.</p>
+<pre class="prettyprint" data-lang="SQL">DO $$
+DECLARE
+  tst RECORD;
+  res RECORD;
+BEGIN
+    FOR tst IN SELECT * FROM expected_vals LOOP
+        res := booking_candidates(tst.pc, 9, 'QTS', ARRAY[tst.wkend-6], 1);
+        INSERT INTO actual_vals VALUES (tst.i, res.tid, res.postcode, tst.wkend);
+    END LOOP;
+END;
+$$;
+
+SELECT results_eq(
+    $$SELECT i, pc, tid FROM actual_vals ORDER BY i$$,
+    $$SELECT i, pc, tid FROM expected_vals ORDER BY i$$,
+    'booking_candidates() finds teacher at exact postcode'
+);
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="59">
+    <hgroup>
+      <h2>All Together - Test</h2>
+    </hgroup>
+    <article>
+    <p>In a run like this.</p>
+<pre class="prettyprint">$ pg_prove --port=5433 -U pgday t/*
+t/20_mode_agg.sql ..... ok   
+t/20_pc_to_pt.sql ..... ok   
+t/20_to_district.sql .. ok   
+t/45_wkend_fns.sql .... ok   
+t/50_bookings.sql ..... ok   
+t/60_flags_set.sql .... ok   
+t/61_avail_flags.sql .. ok   
+t/62_pc_flags.sql ..... ok   
+t/99_permissions.sql .. ok   
+t/avail_rules.sql ..... ok   
+All tests successful.
+Files=10, Tests=28, 25 wallclock secs ( 0.09 usr  0.03 sys ...)
+Result: PASS
+</pre>
+    </article>
+  </slide>
+
+<slide class="segue" data-num="60">
+    <hgroup class="auto-fadein">
+      <h2>Deployment</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="61">
+    <hgroup>
+      <h2>Installation/Setup Tools</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>OS: apt</li>
+        <li>Configure OS / PostgreSQL</li>
+        <li>DB: rebuild.sh</li>
+        <li>Perl: cpanm</li>
+        <li>Tie them together?</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="62">
+    <hgroup>
+      <h2>Ansible</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Python tool - not too many dependencies</li>
+        <li>Drives actions over ssh</li>
+		<li>Config file lists target hosts</li>
+        <li>Hosts can be in one or more groups</li>
+        <li>Playbooks list actions</li>
+        <li>Actions should be idempotent</li>
+        <li>Groups, hosts, playbooks can define/use variables</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="63">
+    <hgroup>
+      <h2>Ansible actions</h2>
+    </hgroup>
+    <article>
+    <ul>
+        <li>packaging: apt, yum</li>
+        <li>files: copy, template, lineinfile</li>
+        <li>system: users, services</li>
+        <li>commands: exec'd or passed to shell</li>
+        <li>PG: create db, users, grants</li>
+    </ul>
+    </article>
+  </slide>
+
+<slide data-num="64">
+    <hgroup>
+      <h2>Ansible Playbook</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="yaml">---
+- hosts: all
+  user:  root
+  tasks:
+  - name: install pgsql
+    apt: pkg=$item
+    with_items:
+    - postgresql-9.2
+    - postgresql-client-9.2
+    - postgresql-contrib-9.2
+    - postgresql-server-dev-9.2
+    - pgxnclient
+</pre<>
+    </article>
+  </slide>
+
+<slide data-num="65">
+    <hgroup>
+      <h2>Ansible Playbook</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint" data-lang="yaml">
+  - name: set archive-mode (enabled)
+    lineinfile: dest   = /etc/postgresql/9.2/main/postgresql.conf
+                insertbefore = "^#archive_mode"
+                regexp = "^archive_mode ="
+                line   = "archive_mode = on"
+                state  = present
+
+  ...
+
+  - name: start pgsql
+    service: name=postgresql enabled=yes state=started
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="66">
+    <hgroup>
+      <h2>Ansible - Pros and Cons</h2>
+    </hgroup>
+    <article>
+      <p>Pros:</p>
+      <ul>
+        <li>Simple enough to understand</li>
+        <li>Small enough to manage 1 vm</li>
+        <li>Can talk to anything with a ssh server</li>
+        <li>Docs pretty good</li>
+      </ul>
+      <p>Cons:</p>
+      <ul>
+        <li>First vm takes time - repeated test runs</li>
+        <li>Not for 5,000 servers</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide class="segue" data-num="67">
+    <hgroup class="auto-fadein">
+      <h2>Monitoring</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="68">
+    <hgroup>
+      <h2>Monitoring - Objectives</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Overview on one screen</li>
+		<li>Detailed view of one service on one host</li>
+        <li>Alerts if service unavailable</li>
+        <li>Basic performance stats</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="69">
+    <hgroup>
+      <h2>Monitoring - Nagios</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Popular</li>
+        <li>Lots of plugins</li>
+        <li>Lots of alert options</li>
+        <li>Simple to write your own</li>
+        <li>Can be fiddly to debug</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="70">
+    <hgroup>
+      <h2>Nagios config</h2>
+    </hgroup>
+    <article>
+<pre class="prettyprint">
+# Nagios NRPE remote config
+command[check_root_disk] = /usr/lib/nagios/plugins/check_disk -w 20% -c 10% -p /
+
+command[pgday_lag] = /usr/lib/nagios/plugins/check_postgres.pl --action=hot_standby_delay
+  --host=localhost,{{hostvars[other_host]['ansible_ssh_host']}} 
+  --dbuser=pgrepl --dbname=postgres --dbpass=abc123 
+  --warning=123 --critical=456
+</pre>
+    </article>
+  </slide>
+
+<slide data-num="71">
+    <hgroup>
+      <h2>Nagios screens</h2>
+    </hgroup>
+    <article>
+<img src="images/nagios_tactical.png">
+    </article>
+  </slide>
+
+<slide data-num="72">
+    <hgroup>
+      <h2>Nagios screens</h2>
+    </hgroup>
+    <article>
+<img src="images/nagios_chart.png">
+      <p>Charts generated by pnp4nagios.</p>
+    </article>
+  </slide>
+
+<slide class="segue" data-num="75">
+    <hgroup class="auto-fadein">
+      <h2>And so...</h2>
+    </hgroup>
+  </slide>
+
+<slide data-num="76">
+    <hgroup>
+      <h2>Performance</h2>
+    </hgroup>
+    <article>
+	  <p>Need a simple script to test random queries.</p>
+      <ul>
+		<li>Fetch all schools</li>
+		<li>Build a list of random bookings</li>
+		<li>Fork children to run queries</li>
+		<li>Wait for all children to complete</li>
+		<li>params<ul>
+			<li>number of bookings</li>
+			<li>number of children</li>
+			<li>random seed</li>
+		</ul></li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="77">
+    <hgroup>
+      <h2>Performance</h2>
+    </hgroup>
+    <article>
+      <p>Our target:</p>
+      <ul>
+        <li>50,000 teachers</li>
+        <li>target = 10 req/sec</li>
+        <li>25,000 schools</li>
+        <li>2,500 requests in 10 mins</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="78">
+    <hgroup>
+      <h2>Performance</h2>
+    </hgroup>
+    <article>
+	  <p>We got:</p>
+      <ul>
+        <li>50,000 teachers</li>
+        <li>target = 10 req/sec</li>
+        <li>actual = 75 req/sec</li>
+        <li>Too easy - 1 core, 1GB RAM</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="79">
+    <hgroup>
+      <h2>Performance - I</h2>
+    </hgroup>
+    <article>
+	  <p>Try bigger:</p>
+      <ul>
+        <li>500,000 teachers</li>
+        <li>target = 10 req/sec</li>
+        <li>actual = 14 req/sec</li>
+        <li>Still using - 1 core, 1GB RAM...</li>
+        <li>...but I've already ordered a bigger VM</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="80">
+    <hgroup>
+      <h2>Performance - II</h2>
+    </hgroup>
+    <article>
+	  <p>OK, bigger again:</p>
+      <ul>
+        <li>5,000,000 teachers...</li>
+        <li>...it's starting to take a while to generate the test data now</li>
+        <li>target = 10 req/sec</li>
+        <li>Bigger box - 4 core, 8GB RAM</li>
+        <li>actual = 29 req/sec</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="81">
+    <hgroup>
+      <h2>Performance - II</h2>
+    </hgroup>
+    <article>
+      <p>But that's because we're matching ~10,000 teachers and only keeping 10 of them.</p>
+      <p>Restrict the area of search so we only throw 5,000 away and we get...</p>
+      <ul>
+        <li>previous = 29 req/sec</li>
+        <li>is now = 60 req/sec</li>
+        <li>That's on a vm costing ~ £70/month.</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="81">
+    <hgroup>
+      <h2>In Summary</h2>
+    </hgroup>
+    <article>
+        <ul>
+            <li>Use PostgreSQL's features</li>
+            <li>Script database construction</li>
+            <li>Test database construction & functionality</li>
+            <li>Automate deployment</li>
+            <li>Set up monitoring</li>
+        </ul>
+    </article>
+  </slide>
+
+<slide data-num="82">
+    <hgroup>
+      <h2>Thanks</h2>
+    </hgroup>
+    <article>
+      <p>Thanks to:</p>
+      <ul>
+        <li>Postcodes - ordnance Survey (data.gov.uk)</li>
+        <li>Schools - Dept for Education (data.gov.uk)</li>
+        <li>VMs - Bytemark and Memset</li>
+        <li>OS - Debian Project</li>
+        <li>DB - PostgreSQL team</li>
+        <li>Contributors to all the tools that made this possible</li>
+      </ul>
+    </article>
+  </slide>
+
+<slide data-num="83">
+    <hgroup>
+      <h2>Questions?</h2>
+    </hgroup>
+    <article>
+      <p>Code will be on github shortly. Check planet.postgresql.org for a notice.</p>
+      <p>Any questions?</p>
+    </article>
+  </slide>
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>
